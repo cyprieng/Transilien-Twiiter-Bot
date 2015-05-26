@@ -177,5 +177,4 @@ function bot(){
   checkDM();
 }
 
-//setInterval(bot, 60000);
-console.log(transilien_user);
+setInterval(bot, 60000);
