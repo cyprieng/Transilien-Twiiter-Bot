@@ -94,7 +94,7 @@ function followUsers(){
       var ids = [];
 
       for(i in followers){
-        if(!(followers[i] in friends)){ // Follower to follow
+        if(friends.indexOf(followers[i]) == -1){ // Follower to follow
           ids.push(followers[i]);
         }
         else { // We reach a followed user => break
@@ -177,4 +177,5 @@ function bot(){
   checkDM();
 }
 
-setInterval(bot, 60000);
+//setInterval(bot, 60000);
+followUsers();
