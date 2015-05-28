@@ -20,7 +20,7 @@ function checkMentions(){
             var user = data[tweet].user.screen_name;
 
             // Reply to user
-            postNextTrainText(origin.code, destination.code, user, false);
+            postNextTrainText(origin, destination, user, false);
           }
         }
       }
@@ -49,7 +49,7 @@ function checkDM(){
             var user = data[dm].sender_id;
 
             // Reply to user
-            postNextTrainText(origin.code, destination.code, user, true);
+            postNextTrainText(origin, destination, user, true);
           }
         }
       }
@@ -119,6 +119,25 @@ function followUsers(){
    dm: true => send DM, false => send mention
 */
 function postNextTrainText(origin, destination, user, dm){
+  if(!origin || !destination){ // Station does not exist
+    // Post error message
+    if(dm){
+      T.post('direct_messages/new', { user_id: user, text: "Gares non trouvées."}, function(err, data, response) {
+        console.log(data);
+      });
+    }else{
+      T.post('statuses/update', { status: "@" + user + " Gares non trouvées."}, function(err, data, response) {
+        console.log(data);
+      });
+    }
+
+    return;
+  }
+
+  // Get stations code
+  origin = origin.code;
+  destination = destination.code;
+
   var http = require('http');
 
   // Call transilien API
@@ -140,6 +159,21 @@ function postNextTrainText(origin, destination, user, dm){
     res.on('end', function() {
       var parseString = require('xml2js').parseString;
       parseString(xml, function (err, result) {
+        if(!result.passages.train){ // Itinary not found
+          // Post error message
+          if(dm){
+            T.post('direct_messages/new', { user_id: user, text: "Itinéraire non trouvé."}, function(err, data, response) {
+              console.log(data);
+            });
+          }else{
+            T.post('statuses/update', { status: "@" + user + " Itinéraire non trouvé."}, function(err, data, response) {
+              console.log(data);
+            });
+          }
+
+          return;
+        }
+
         // Train 1 data
         var re = new RegExp("^.+/.+/.+ (.+)$");
         var train1Data = result.passages.train[0];
@@ -177,5 +211,4 @@ function bot(){
   checkDM();
 }
 
-//setInterval(bot, 60000);
-followUsers();
+setInterval(bot, 60000);
