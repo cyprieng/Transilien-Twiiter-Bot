@@ -277,8 +277,7 @@ function postTheoricalTrain(origin, destination, user, dm){
 
                   if(trainFound == 2){ // We found two trains
                     trainTxt += trainTime + ": " + trainCode + " " + routeName;
-                    console.log(trainTxt);
-                    return;
+                    
                     // Post message
                     if(dm){
                       T.post('direct_messages/new', { user_id: user, text: trainTxt}, function(err, data, response) {
