@@ -261,12 +261,14 @@ function postTheoricalTrain(origin, destination, user, dm){
           for(stop in stopList){ // Fetch stop in the route
             var originData = stopList[stop];
             if(originData.StopPoint[0].$.StopPointExternalCode == origin_code &&
-            originData.StopTime[0].Hour >= today.getHours() && originData.StopTime[0].Minute >= today.getMinutes()){
+            (originData.StopTime[0].Hour >= today.getHours() || originData.StopTime[0].Minute >= today.getMinutes())){
               // Origin found
               for(i in stopList){
                 var destinationData = stopList[i];
 
-                if(destinationData.StopPoint[0].$.StopPointExternalCode == destination_code){
+                if(destinationData.StopPoint[0].$.StopPointExternalCode == destination_code &&
+                  (originData.StopTime[0].Hour < destinationData.StopTime[0].Hour ||
+                  originData.StopTime[0].Minute < destinationData.StopTime[0].Minute)){
                   // Destination found => get train data
                   var trainCode = journey.$.VehicleJourneyName;
                   var trainTime = originData.StopTime[0].Hour + ":" + originData.StopTime[0].Minute;
@@ -275,7 +277,8 @@ function postTheoricalTrain(origin, destination, user, dm){
 
                   if(trainFound == 2){ // We found two trains
                     trainTxt += trainTime + ": " + trainCode + " " + routeName;
-
+                    console.log(trainTxt);
+                    return;
                     // Post message
                     if(dm){
                       T.post('direct_messages/new', { user_id: user, text: trainTxt}, function(err, data, response) {
@@ -291,9 +294,13 @@ function postTheoricalTrain(origin, destination, user, dm){
                   }
                   else{
                     trainTxt += trainTime + ": " + trainCode + " " + routeName + " suivi par ";
+                    break;
                   }
                 }
               }
+
+              if(trainFound > 0)
+                break;
             }
           }
         }
