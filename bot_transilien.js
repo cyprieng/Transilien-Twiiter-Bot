@@ -1,5 +1,14 @@
 require('./settings')
 
+// Truncate a string
+String.prototype.trunc =
+  function(n,useWordBoundary){
+    var toLong = this.length>n,
+      s_ = toLong ? this.substr(0,n-3) : this;
+    s_ = useWordBoundary && toLong ? s_.substr(0,s_.lastIndexOf(' ')) : s_;
+    return  toLong ? s_ + '...' : s_;
+  };
+
 // Check new mentions of the account
 var referenceDate = new Date();
 function checkMentions(){
@@ -180,13 +189,19 @@ function postNextTrainText(origin, destination, user, dm){
         var date = matches[1];
         var train2 = date + ": " + train2Data.miss + " à destination de " + term.station;
 
+        // Generate text and truncate to fit in 140 char
+        var textDM = train1 + " suivi par " + train2;
+        textDM = textDM.trunc(140, true);
+        var textMention = "@" + user + " " + train1 + " suivi par " + train2;
+        textMention = textMention.trunc(140, true);
+
         // Post message
         if(dm){
-          T.post('direct_messages/new', { user_id: user, text: train1 + " suivi par " + train2}, function(err, data, response) {
+          T.post('direct_messages/new', { user_id: user, text: textDM}, function(err, data, response) {
             console.log(data);
           });
         }else{
-          T.post('statuses/update', { status: "@" + user + " " + train1 + " suivi par " + train2}, function(err, data, response) {
+          T.post('statuses/update', { status: textMention}, function(err, data, response) {
             console.log(data);
           });
         }
@@ -279,13 +294,18 @@ function postTheoricalTrain(origin, destination, user, dm){
                   if(trainFound == 2){ // We found two trains
                     trainTxt += trainTime + ": " + trainCode + " " + routeName;
 
+                    // Generate text and truncate to fit in 140 char
+                    var textDM = trainTxt.trunc(140, true);
+                    var textMention = "@" + user + " " + trainTxt;
+                    textMention = textMention.trunc(140, true);
+
                     // Post message
                     if(dm){
-                      T.post('direct_messages/new', { user_id: user, text: trainTxt}, function(err, data, response) {
+                      T.post('direct_messages/new', { user_id: user, text: textDM}, function(err, data, response) {
                         console.log(data);
                       });
                     }else{
-                      T.post('statuses/update', { status: "@" + user + " " + trainTxt}, function(err, data, response) {
+                      T.post('statuses/update', { status: textMention}, function(err, data, response) {
                         console.log(data);
                       });
                     }
