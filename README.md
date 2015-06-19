@@ -1,6 +1,6 @@
 # Transilien-Twitter-Bot
 This bots gives you information about the [RER trains](https://en.wikipedia.org/wiki/R%C3%A9seau_Express_R%C3%A9gional).
-It checks his mentions and detects tweets in the following format: "origin -> destination". And answers it with the two next trains deserving the itinerary. The bot also follow you back automatically so you can do the same by DM.
+It checks his mentions and detects tweets in the following format: `origin -> destination`. And answers it with the two next trains deserving the itinerary. The bot also follow you back automatically so you can do the same by DM.
 
 ## Dependencies & API
 This bot use the [Transilien Real Time API](https://ressources.data.sncf.com/explore/dataset/api-temps-reel-transilien/), and the [Transilien Micro Service API](https://ressources.data.sncf.com/explore/dataset/sncf-micro-services/) for the theorical time in case real time API does not answer.
@@ -12,6 +12,8 @@ Libs:
 ## Install
 Clone the repo `git clone https://github.com/cyprieng/Transilien-Twitter-Bot.git`.
 Then get your [Twitter API key](https://apps.twitter.com/) (with direct messages permissions), and [Transilien API](https://ressources.data.sncf.com/explore/dataset/api-temps-reel-transilien/). And fill `settings.js`.
+
+Then run `node bot_transilien.js`.
 
 ## Example
 You can see the bot here: [twitter.com/bot_transilien](https://twitter.com/bot_transilien)
